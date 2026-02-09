@@ -58,17 +58,9 @@ th { background-color: #f0f0f0; }
 </table>
 
 <script>
-// ===============================
-// 1) Google Sheets 發佈的 CSV
-// ===============================
-const sheetCsvUrl =
+// ====== CSV 連結（GitHub Pages 可直接讀取）======
+const csvUrl =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vS0tI5Jlr-JGfZEZ1_DBIQQ-bTZ1g1I6uggZj7J3ZhgF5wQiv1EP2HI96CbC4o6CpsFWAeVB9A2SYm7/pub?gid=0&single=true&output=csv";
-
-// ===============================
-// 2) GitHub Pages 會遇到 CORS
-//    所以加 corsproxy
-// ===============================
-const csvUrl = "https://corsproxy.io/?" + encodeURIComponent(sheetCsvUrl);
 
 let rows = [];
 let header = [];
@@ -118,29 +110,23 @@ function parseCSV(text) {
 
 // ====== 載入 CSV ======
 async function loadCSV() {
-  try {
-    const res = await fetch(csvUrl, { cache: "no-store" });
-    const text = await res.text();
-    const parsed = parseCSV(text);
+  const res = await fetch(csvUrl);
+  const text = await res.text();
+  const parsed = parseCSV(text);
 
-    rows = parsed.filter(r => r.some(c => c && String(c).trim() !== ""));
-    header = rows[0];
+  rows = parsed.filter(r => r.some(c => c && String(c).trim() !== ""));
+  header = rows[0];
 
-    buildStudentDropdown();
-  } catch (err) {
-    console.error(err);
-    document.querySelector("#resultTable tbody").innerHTML =
-      `<tr><td>載入資料失敗，請確認 Google 試算表是否已發佈成 CSV</td></tr>`;
-  }
+  buildStudentDropdown();
 }
 
-// ====== 建立學生選單 ======
+// ====== 建立學生選單（改為 A2:A） ======
 function buildStudentDropdown() {
-  const nameIdx = header.indexOf("姓名");
   const set = new Set();
 
+  // A欄 = index 0，從第2列開始
   rows.slice(1).forEach(r => {
-    const name = (r[nameIdx] ?? "").trim();
+    const name = String(r[0] ?? "").trim();
     if (name) set.add(name);
   });
 
@@ -155,10 +141,11 @@ function buildStudentDropdown() {
   });
 }
 
-// ====== 篩選學生資料 ======
+// ====== 篩選學生資料（依欄位名稱：姓名） ======
 function filterData(studentName) {
-  const nameIdx = header.indexOf("姓名");
-  return rows.slice(1).filter(r => (r[nameIdx] ?? "").trim() === studentName);
+  const idxName = header.indexOf("姓名");
+  if (idxName === -1) return [];
+  return rows.slice(1).filter(r => String(r[idxName] ?? "").trim() === studentName);
 }
 
 // ====== 繳費狀態判斷 ======
@@ -167,11 +154,9 @@ function renderPayStatus(data) {
   statusDiv.textContent = "";
 
   const payIdx = header.indexOf("繳費情況");
+  if (payIdx === -1) return;
 
-  const hasPaid = data.some(r =>
-    (r[payIdx] ?? "").trim() === "已繳費"
-  );
-
+  const hasPaid = data.some(r => String(r[payIdx] ?? "").trim() === "已繳費");
   statusDiv.textContent = hasPaid ? "已繳費" : "未繳費";
 }
 
@@ -179,7 +164,6 @@ function renderPayStatus(data) {
 function renderTable(data) {
   const thead = document.querySelector("#resultTable thead");
   const tbody = document.querySelector("#resultTable tbody");
-
   thead.innerHTML = "";
   tbody.innerHTML = "";
 
@@ -189,7 +173,7 @@ function renderTable(data) {
   }
 
   const idxName = header.indexOf("姓名");
-  const idxType = header.indexOf("類別"); // 顯示為「項目」
+  const idxType = header.indexOf("類別");     // 顯示為「項目」
   const idxPay  = header.indexOf("繳費情況");
 
   thead.innerHTML = `
