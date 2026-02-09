@@ -3,415 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>繳費查詢</title>
+<title>寒訓繳費查詢</title>
 
 <style>
 :root{
-  --bg1:#e8f6ff;
-  --bg2:#f3f8ff;
+  --bg1:#e9fff6;
+  --bg2:#eaf3ff;
   --card:#ffffffcc;
   --line:#d9e6ff;
-  --text:#20304a;
-  --muted:#5a6b86;
-  --primary:#2a6cff;
-  --primary2:#00b7ff;
-  --danger:#ff3b3b;
-  --shadow: 0 16px 40px rgba(18, 41, 90, .14);
+  --ink:#17324a;
+  --muted:#5c728a;
+  --green:#16a34a;
+  --red:#ef4444;
+  --shadow: 0 18px 50px rgba(15, 23, 42, .12);
   --radius: 18px;
 }
 
-/* ====== 背景：羽球可愛運動風 ====== */
+*{ box-sizing:border-box; }
+
 body{
-  font-family: "Microsoft JhengHei", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
   margin:0;
-  padding: 28px 14px;
-  color: var(--text);
-  min-height: 100vh;
-
-  background:
-    radial-gradient(circle at 18% 22%, rgba(42,108,255,.14) 0 120px, transparent 121px),
-    radial-gradient(circle at 85% 20%, rgba(0,183,255,.16) 0 150px, transparent 151px),
-    radial-gradient(circle at 78% 80%, rgba(255,183,77,.18) 0 170px, transparent 171px),
-    linear-gradient(180deg, var(--bg1), var(--bg2));
+  min-height:100vh;
   display:flex;
+  align-items:center;
   justify-content:center;
-  align-items:flex-start;
+  padding:22px;
+  color:var(--ink);
+  background:
+    radial-gradient(900px 500px at 15% 10%, #ffffff 0%, transparent 55%),
+    radial-gradient(900px 520px at 85% 20%, #ffffff 0%, transparent 55%),
+    radial-gradient(700px 480px at 50% 90%, #d9fff0 0%, transparent 60%),
+    linear-gradient(135deg, var(--bg1), var(--bg2));
+  overflow-x:hidden;
 }
 
-/* ====== 置中卡片 ====== */
-.container{
-  width: min(920px, 100%);
-  background: var(--card);
-  border: 1px solid rgba(217,230,255,.9);
-  box-shadow: var(--shadow);
-  border-radius: var(--radius);
-  padding: 18px 16px 16px;
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
+/* 背景可愛羽球裝飾 */
+.bg-deco{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.9;
 }
-
-/* 裝飾：羽球線條 */
-.container::before{
+.bg-deco::before,
+.bg-deco::after{
   content:"";
   position:absolute;
-  inset:-40px -60px auto auto;
-  width: 260px;
-  height: 260px;
-  background:
-    radial-gradient(circle at 35% 35%, rgba(42,108,255,.14), transparent 60%),
-    radial-gradient(circle at 65% 65%, rgba(0,183,255,.12), transparent 60%);
-  border-radius: 50%;
-  filter: blur(2px);
-  pointer-events:none;
+  width:360px;
+  height:360px;
+  border-radius:50%;
+  filter: blur(1px);
+  opacity:.55;
+}
+.bg-deco::before{
+  left:-90px;
+  top:-90px;
+  background: radial-gradient(circle at 30% 30%, #b7ffd8, transparent 60%);
+}
+.bg-deco::after{
+  right:-120px;
+  bottom:-120px;
+  background: radial-gradient(circle at 35% 35%, #b9d7ff, transparent 62%);
 }
 
-/* ====== 標題：Tab 羽球動畫 ====== */
+.wrap{
+  width:min(920px, 100%);
+  display:flex;
+  justify-content:center;
+}
+
+.card{
+  width:min(760px, 100%);
+  background:var(--card);
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(120, 170, 255, .25);
+  border-radius:var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 18px 18px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* 小羽球標籤 */
+.badge-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-bottom: 10px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 7px 12px;
+  border-radius:999px;
+  font-size:13px;
+  color:#0b3a2a;
+  background: linear-gradient(135deg, #d9fff0, #e9f2ff);
+  border:1px solid rgba(40, 120, 255, .18);
+  box-shadow: 0 8px 18px rgba(2, 6, 23, .06);
+}
+
+.badge .shuttle{
+  width:18px;
+  height:18px;
+  display:inline-block;
+  transform: rotate(-10deg);
+}
+
+/* 標題 tab + 羽球動畫 */
 .header{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap: 12px;
-  margin-bottom: 14px;
+  justify-content:center;
+  gap:14px;
+  margin: 2px 0 14px;
+  position:relative;
+}
+
+.tab{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ffffff, #eaf3ff);
+  border: 1px solid rgba(80, 140, 255, .25);
+  box-shadow: 0 14px 26px rgba(15, 23, 42, .08);
+  position:relative;
+  overflow:hidden;
+}
+
+.tab::after{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  background: radial-gradient(circle at 30% 30%, rgba(180,255,220,.65), transparent 55%);
+  opacity:.55;
 }
 
 h2{
   margin:0;
   font-size: 22px;
   letter-spacing:.5px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-/* 羽球 icon */
-.shuttle{
-  width: 22px;
-  height: 22px;
-  display:inline-block;
   position:relative;
+  z-index:1;
 }
 
-/* 羽球：用CSS畫 */
-.shuttle::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff, #eaf2ff 55%, #cfe0ff 100%);
-  box-shadow: 0 6px 14px rgba(20,60,130,.18);
+/* tab 羽球飛行動畫 */
+.fly-shuttle{
+  width:26px;
+  height:26px;
+  position:relative;
+  z-index:1;
+  animation: tabFly 2.6s ease-in-out infinite;
+  transform-origin:center;
 }
 
-.shuttle::after{
-  content:"";
-  position:absolute;
-  left: 7px;
-  top: -10px;
-  width: 8px;
-  height: 16px;
-  border-radius: 10px 10px 2px 2px;
-  background: linear-gradient(180deg, #ffffff, #e9f1ff);
-  box-shadow: 0 6px 12px rgba(20,60,130,.10);
-  transform: rotate(18deg);
+@keyframes tabFly{
+  0%   { transform: translateX(-2px) translateY(0px) rotate(-10deg); }
+  50%  { transform: translateX(10px) translateY(-5px) rotate(12deg); }
+  100% { transform: translateX(-2px) translateY(0px) rotate(-10deg); }
 }
 
-/* Tab 動畫：小羽球來回飛 */
-.tabFly{
+/* 控制區 */
+.controls{
   display:flex;
+  flex-direction:column;
+  gap:10px;
   align-items:center;
-  gap: 10px;
-}
-
-.flyLine{
-  width: 110px;
-  height: 22px;
-  position: relative;
-  opacity: .9;
-}
-
-.flyLine::before{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  top: 11px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(42,108,255,.35), transparent);
-  border-radius: 999px;
-}
-
-.flyBall{
-  position:absolute;
-  top: 2px;
-  left: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff, #eaf2ff 55%, #cfe0ff 100%);
-  box-shadow: 0 8px 16px rgba(20,60,130,.16);
-  animation: fly 2.2s ease-in-out infinite;
-}
-
-.flyBall::after{
-  content:"";
-  position:absolute;
-  left: 6px;
-  top: -8px;
-  width: 6px;
-  height: 12px;
-  border-radius: 8px 8px 2px 2px;
-  background: linear-gradient(180deg, #ffffff, #e9f1ff);
-  transform: rotate(18deg);
-}
-
-@keyframes fly{
-  0%{ transform: translateX(0) translateY(0) rotate(0deg); }
-  45%{ transform: translateX(90px) translateY(6px) rotate(12deg); }
-  55%{ transform: translateX(90px) translateY(6px) rotate(12deg); }
-  100%{ transform: translateX(0) translateY(0) rotate(0deg); }
-}
-
-/* ====== 羽球小標籤 ====== */
-.badges{
-  display:flex;
-  flex-wrap:wrap;
-  gap: 8px;
-  margin: 8px 0 14px;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(42,108,255,.08);
-  border: 1px solid rgba(42,108,255,.18);
-  color: #24407a;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.badge .mini{
-  width: 14px;
-  height: 14px;
-  display:inline-block;
-  position: relative;
-}
-.badge .mini::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff, #eaf2ff 55%, #cfe0ff 100%);
-}
-.badge .mini::after{
-  content:"";
-  position:absolute;
-  left: 4px;
-  top: -6px;
-  width: 5px;
-  height: 9px;
-  border-radius: 8px 8px 2px 2px;
-  background: linear-gradient(180deg, #ffffff, #e9f1ff);
-  transform: rotate(18deg);
-}
-
-/* ====== 表單區 ====== */
-.formRow{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap: 10px 12px;
-  padding: 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(217,230,255,.9);
-  background: rgba(255,255,255,.75);
+  justify-content:center;
+  padding: 10px 0 12px;
 }
 
 label{
-  font-weight: 800;
-  color: #243552;
-  letter-spacing:.2px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-label .labelIcon{
-  width: 18px;
-  height: 18px;
-  display:inline-block;
-  position:relative;
-}
-label .labelIcon::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff, #eaf2ff 55%, #cfe0ff 100%);
-  box-shadow: 0 6px 14px rgba(20,60,130,.10);
-}
-label .labelIcon::after{
-  content:"";
-  position:absolute;
-  left: 6px;
-  top: -8px;
-  width: 6px;
-  height: 12px;
-  border-radius: 8px 8px 2px 2px;
-  background: linear-gradient(180deg, #ffffff, #e9f1ff);
-  transform: rotate(18deg);
+  font-size: 15px;
+  color: var(--muted);
 }
 
 select{
+  width: min(360px, 92%);
   font-size: 16px;
-  padding: 10px 12px;
-  width: min(340px, 100%);
+  padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid rgba(42,108,255,.22);
+  border:1px solid rgba(80, 140, 255, .25);
   background: rgba(255,255,255,.95);
-  color: var(--text);
-  outline: none;
-  box-shadow: 0 10px 18px rgba(18, 41, 90, .06);
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  outline:none;
+  box-shadow: 0 10px 20px rgba(2, 6, 23, .06);
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
 select:focus{
-  border-color: rgba(42,108,255,.55);
-  box-shadow: 0 14px 26px rgba(18, 41, 90, .12);
   transform: translateY(-1px);
+  box-shadow: 0 16px 26px rgba(2, 6, 23, .10);
 }
 
-/* ====== 繳費狀態 ====== */
+/* 繳費狀態 */
 #payStatus{
-  margin: 10px 0 0;
-  font-size: 18px;
+  margin: 2px 0 6px;
+  font-size: 20px;
   font-weight: 900;
-  letter-spacing:.6px;
-  padding: 10px 12px;
+  letter-spacing:1px;
+  padding: 10px 14px;
   border-radius: 14px;
-  display:inline-flex;
-  align-items:center;
-  gap: 10px;
-  border: 1px dashed rgba(42,108,255,.35);
-  background: rgba(255,255,255,.7);
+  min-width: min(360px, 92%);
+  text-align:center;
+  border:1px solid rgba(80, 140, 255, .20);
+  background: rgba(255,255,255,.75);
+  box-shadow: 0 12px 26px rgba(2, 6, 23, .06);
 }
 
-/* 預設紅色(未繳費) */
-#payStatus{
-  color: var(--danger);
-}
-
-/* ====== 表格 ====== */
+/* 表格 */
 .tableWrap{
-  margin-top: 14px;
-  border-radius: 16px;
+  margin-top: 10px;
+  border-radius: 18px;
   overflow:hidden;
-  border: 1px solid rgba(217,230,255,.95);
-  background: rgba(255,255,255,.85);
+  border:1px solid rgba(80, 140, 255, .18);
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 18px 34px rgba(2, 6, 23, .08);
 }
 
 table{
+  width:100%;
   border-collapse: collapse;
-  width: 100%;
 }
 
 th, td{
-  border-bottom: 1px solid rgba(217,230,255,.95);
-  padding: 11px 10px;
-  text-align: center;
+  border-bottom: 1px solid rgba(80, 140, 255, .14);
+  padding: 12px 10px;
+  text-align:center;
   font-size: 15px;
 }
 
 th{
-  background: linear-gradient(180deg, rgba(42,108,255,.12), rgba(0,183,255,.08));
-  color: #20304a;
-  font-weight: 900;
-  letter-spacing:.3px;
+  background: linear-gradient(135deg, #f6fbff, #eaf3ff);
+  color:#1d3c58;
+  font-weight: 800;
 }
 
 tbody tr{
   transition: transform .12s ease, background .12s ease;
 }
-
 tbody tr:hover{
-  background: rgba(42,108,255,.06);
+  background: rgba(185, 255, 220, .18);
   transform: translateY(-1px);
 }
 
-/* ====== Hover：羽球飛翔效果 ====== */
-.hoverFly{
-  position: relative;
+/* 羽球按鈕 hover 飛翔效果（雖然此頁面沒有按鈕，但我仍加上可直接用） */
+.btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding: 11px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(80, 140, 255, .25);
+  background: linear-gradient(135deg, #ffffff, #eaf3ff);
+  color: var(--ink);
+  font-weight: 800;
+  cursor:pointer;
+  box-shadow: 0 16px 26px rgba(2, 6, 23, .08);
+  transition: transform .15s ease, box-shadow .15s ease;
+  overflow:hidden;
 }
 
-.hoverFly::after{
+.btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 20px 34px rgba(2, 6, 23, .12);
+}
+
+.btn .shuttle{
+  width:18px;
+  height:18px;
+  display:inline-block;
+}
+
+.btn::after{
   content:"";
   position:absolute;
-  top: -10px;
-  left: -30px;
-  width: 18px;
-  height: 18px;
+  width:34px;
+  height:34px;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%) translateX(30px) rotate(-12deg);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.1) 60%),
+    radial-gradient(circle at 70% 70%, rgba(185, 255, 220, .8), transparent 60%);
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff, #eaf2ff 55%, #cfe0ff 100%);
-  opacity: 0;
-  transform: translateX(0) translateY(0) rotate(0deg);
-  pointer-events:none;
+  opacity:0;
 }
 
-.hoverFly:hover::after{
-  opacity: 1;
-  animation: shuttleFly .55s ease-out forwards;
+.btn:hover::after{
+  animation: shuttleTrail .75s ease-out 1;
+  opacity:1;
 }
 
-@keyframes shuttleFly{
-  0%{ transform: translateX(0) translateY(0) rotate(0deg); opacity:0; }
-  20%{ opacity:1; }
-  100%{ transform: translateX(160px) translateY(-18px) rotate(20deg); opacity:0; }
+@keyframes shuttleTrail{
+  0%   { transform: translateY(-50%) translateX(40px) scale(.6); opacity:0; }
+  30%  { opacity:1; }
+  100% { transform: translateY(-50%) translateX(-120px) scale(1.15); opacity:0; }
 }
 
-/* 手機 */
+/* 手機版 */
 @media (max-width: 520px){
   h2{ font-size: 20px; }
-  .flyLine{ width: 86px; }
-  th, td{ font-size: 14px; padding: 10px 8px; }
+  th, td{ font-size: 14px; padding: 11px 8px; }
 }
 </style>
 </head>
 
 <body>
-  <div class="container">
+<div class="bg-deco"></div>
 
-    <div class="header">
-      <h2>
-        <span class="shuttle" aria-hidden="true"></span>
-        羽球繳費查詢
-      </h2>
+<div class="wrap">
+  <div class="card">
 
-      <div class="tabFly" aria-hidden="true">
-        <div class="flyLine">
-          <div class="flyBall"></div>
-        </div>
+    <div class="badge-row">
+      <div class="badge">
+        <svg class="shuttle" viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M32 6c6 7 10 15 10 22 0 9-7 16-10 16s-10-7-10-16c0-7 4-15 10-22z" fill="#ffffff"/>
+          <path d="M20 28c-7 2-12 6-12 10 0 7 11 13 24 13s24-6 24-13c0-4-5-8-12-10" fill="rgba(185,255,220,.9)"/>
+          <path d="M24 49l8 9 8-9" fill="rgba(80,140,255,.25)"/>
+          <path d="M32 58v-7" stroke="rgba(23,50,74,.35)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Badminton 冬訓
+      </div>
+
+      <div class="badge">
+        🏸 可愛運動風
+      </div>
+
+      <div class="badge">
+        讀取 Google 試算表資料
       </div>
     </div>
 
-    <!-- 羽球小標籤 -->
-    <div class="badges">
-      <span class="badge"><span class="mini"></span> 羽球隊</span>
-      <span class="badge"><span class="mini"></span> 寒訓指導費</span>
-      <span class="badge"><span class="mini"></span> 繳費查詢</span>
+    <div class="header">
+      <div class="tab">
+        <svg class="fly-shuttle" viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M32 6c6 7 10 15 10 22 0 9-7 16-10 16s-10-7-10-16c0-7 4-15 10-22z" fill="#ffffff"/>
+          <path d="M20 28c-7 2-12 6-12 10 0 7 11 13 24 13s24-6 24-13c0-4-5-8-12-10" fill="rgba(185,255,220,.9)"/>
+          <path d="M24 49l8 9 8-9" fill="rgba(80,140,255,.25)"/>
+          <path d="M32 58v-7" stroke="rgba(23,50,74,.35)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h2>繳費查詢</h2>
+      </div>
     </div>
 
-    <div class="formRow hoverFly">
-      <label for="studentSelect">
-        <span class="labelIcon" aria-hidden="true"></span>
-        選擇學生
-      </label>
-
+    <div class="controls">
+      <label>選擇學生</label>
       <select id="studentSelect">
         <option value="">--請選擇--</option>
       </select>
-
       <div id="payStatus"></div>
     </div>
 
@@ -423,6 +368,7 @@ tbody tr:hover{
     </div>
 
   </div>
+</div>
 
 <script>
 // ====== CSV 連結（GitHub Pages 可直接讀取）======
@@ -525,6 +471,13 @@ function renderPayStatus(data) {
 
   const hasPaid = data.some(r => String(r[payIdx] ?? "").trim() === "已繳費");
   statusDiv.textContent = hasPaid ? "已繳費" : "未繳費";
+
+  // 狀態顏色（不改功能，只是視覺）
+  if (hasPaid) {
+    statusDiv.style.color = "#16a34a";
+  } else {
+    statusDiv.style.color = "#ef4444";
+  }
 }
 
 // ====== 顯示表格（姓名、項目、繳費情況） ======
