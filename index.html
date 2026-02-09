@@ -6,353 +6,418 @@
 <title>繳費查詢</title>
 
 <style>
-/* =========================
-   🌸 春季粉嫩花卉主題設定
-   ========================= */
 :root{
-  --bg1:#fff1f7;
-  --bg2:#f3fbff;
+  --bg1:#e9f8ff;
+  --bg2:#f7fbff;
   --card:#ffffffcc;
-  --line:#ffd6e6;
-  --text:#4a3b45;
-  --muted:#7a6672;
-  --primary:#ff77a8;
-  --primary2:#ffb3cf;
-  --good:#1aa37a;
-  --bad:#ff3f6e;
-  --shadow: 0 18px 45px rgba(255, 119, 168, 0.18);
-  --radius: 22px;
+  --card2:#ffffffef;
+  --text:#1f2d3d;
+  --muted:#52657a;
+
+  --primary:#1ea7ff;
+  --primary2:#00d2ff;
+  --accent:#34c759;
+
+  --shadow: 0 18px 40px rgba(0,0,0,.10);
+  --shadow2: 0 10px 20px rgba(0,0,0,.08);
+
+  --radius: 20px;
 }
 
-/* 背景：春天漸層 + 花瓣點點 */
+*{ box-sizing:border-box; }
+
 body{
-  font-family: "Microsoft JhengHei", sans-serif;
+  font-family: "Microsoft JhengHei", system-ui, -apple-system, "Segoe UI", sans-serif;
   margin: 0;
-  padding: 28px 14px;
+  padding: 24px;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
   color: var(--text);
+
+  /* 可愛羽球背景：天空漸層 + 球場線條 + 羽球小圖案 */
   background:
-    radial-gradient(circle at 15% 20%, rgba(255, 170, 200, 0.35) 0 120px, transparent 130px),
-    radial-gradient(circle at 85% 30%, rgba(170, 230, 255, 0.40) 0 140px, transparent 150px),
-    radial-gradient(circle at 35% 85%, rgba(255, 220, 170, 0.35) 0 130px, transparent 140px),
-    linear-gradient(135deg, var(--bg1), var(--bg2));
-  overflow-x: hidden;
+    radial-gradient(circle at 12% 18%, rgba(30,167,255,.22), transparent 45%),
+    radial-gradient(circle at 85% 25%, rgba(52,199,89,.18), transparent 40%),
+    radial-gradient(circle at 30% 85%, rgba(0,210,255,.16), transparent 45%),
+
+    /* 球場線條（淡淡的） */
+    repeating-linear-gradient(
+      90deg,
+      rgba(30,167,255,.08) 0px,
+      rgba(30,167,255,.08) 2px,
+      transparent 2px,
+      transparent 56px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(30,167,255,.07) 0px,
+      rgba(30,167,255,.07) 2px,
+      transparent 2px,
+      transparent 56px
+    ),
+
+    linear-gradient(180deg, var(--bg1), var(--bg2));
 }
 
-/* 背景花瓣漂浮（裝飾用，不影響功能） */
-body::before,
-body::after{
-  content:"";
-  position: fixed;
-  inset: -30%;
-  pointer-events: none;
-  background-repeat: repeat;
-  opacity: 0.35;
-  filter: blur(0.2px);
-  z-index: 0;
-}
-body::before{
-  background-image:
-    radial-gradient(circle, rgba(255, 119, 168, 0.25) 0 2px, transparent 3px),
-    radial-gradient(circle, rgba(255, 196, 220, 0.30) 0 2px, transparent 3px),
-    radial-gradient(circle, rgba(255, 230, 240, 0.35) 0 2px, transparent 3px);
-  background-size: 42px 42px, 55px 55px, 70px 70px;
-  animation: floatBg 18s linear infinite;
-}
-body::after{
-  background-image:
-    radial-gradient(circle, rgba(180, 235, 255, 0.25) 0 2px, transparent 3px),
-    radial-gradient(circle, rgba(255, 200, 220, 0.25) 0 2px, transparent 3px);
-  background-size: 80px 80px, 65px 65px;
-  animation: floatBg2 26s linear infinite;
-}
-
-@keyframes floatBg{
-  from { transform: translate3d(0,0,0) rotate(0deg); }
-  to   { transform: translate3d(120px, 80px,0) rotate(10deg); }
-}
-@keyframes floatBg2{
-  from { transform: translate3d(0,0,0) rotate(0deg); }
-  to   { transform: translate3d(-140px, 90px,0) rotate(-12deg); }
-}
-
-/* =========================
-   卡片容器置中
-   ========================= */
+/* 整體置中容器 */
 .wrap{
-  width: min(920px, 96vw);
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* 上方標題卡 */
+.hero{
   position: relative;
-  z-index: 1;
-}
-
-.card{
-  background: var(--card);
-  border: 1px solid rgba(255, 214, 230, 0.9);
   border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.65));
   box-shadow: var(--shadow);
-  padding: 22px 18px 18px;
-  backdrop-filter: blur(10px);
+  padding: 18px 18px 16px;
+  overflow: hidden;
 }
 
-/* =========================
-   標題 + 小花動畫
-   ========================= */
+/* 右上角裝飾羽球（純 CSS） */
+.hero::after{
+  content:"";
+  position:absolute;
+  right:-10px;
+  top:-10px;
+  width: 130px;
+  height: 130px;
+  opacity:.18;
+  background:
+    radial-gradient(circle at 45% 35%, #1ea7ff 0 26px, transparent 27px),
+    radial-gradient(circle at 45% 35%, #ffffff 0 18px, transparent 19px),
+    conic-gradient(from 220deg, rgba(30,167,255,.9), rgba(0,210,255,.9), rgba(52,199,89,.8), rgba(30,167,255,.9));
+  filter: blur(.2px);
+  border-radius: 50%;
+  transform: rotate(10deg);
+}
+
+/* 標題列 */
+.titleRow{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
 h2{
-  margin: 4px 0 14px;
-  font-size: 26px;
-  letter-spacing: 1px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: .5px;
+  display:flex;
+  align-items:center;
   gap: 10px;
 }
 
-.h2-flower{
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, rgba(255,119,168,0.25), rgba(255,210,230,0.35));
-  border: 1px solid rgba(255, 119, 168, 0.25);
+/* 小羽球 icon */
+.shuttleIcon{
+  width: 26px;
+  height: 26px;
+  display:inline-grid;
+  place-items:center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(30,167,255,.18), rgba(52,199,89,.15));
+  box-shadow: 0 10px 18px rgba(0,0,0,.06);
   position: relative;
   overflow: hidden;
 }
 
-.h2-flower::before{
-  content: "🌸";
-  font-size: 18px;
-  animation: bloom 1.6s ease-in-out infinite;
+.shuttleIcon svg{
+  width: 18px;
+  height: 18px;
 }
 
-.h2-flower::after{
-  content: "✿";
-  position: absolute;
-  right: 6px;
-  bottom: 5px;
-  font-size: 12px;
-  opacity: 0.35;
-  animation: wiggle 2.2s ease-in-out infinite;
-}
-
-@keyframes bloom{
-  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
-  50%     { transform: translateY(-1px) rotate(6deg) scale(1.07); }
-}
-@keyframes wiggle{
-  0%,100% { transform: rotate(0deg); }
-  50%     { transform: rotate(-10deg); }
-}
-
-/* =========================
-   控制區塊
-   ========================= */
-.controls{
-  display: grid;
-  grid-template-columns: 1fr;
+/* tab 區（帶羽球動畫） */
+.tabs{
+  display:flex;
   gap: 10px;
-  margin-bottom: 12px;
+  align-items:center;
+}
+
+.tab{
+  position: relative;
+  padding: 9px 14px 9px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0d3a57;
+  background: rgba(30,167,255,.12);
+  border: 1px solid rgba(30,167,255,.22);
+  box-shadow: 0 10px 18px rgba(0,0,0,.06);
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  user-select:none;
+}
+
+.tab .miniShuttle{
+  width: 18px;
+  height: 18px;
+  display:inline-block;
+  animation: shuttleSpin 1.5s ease-in-out infinite;
+  transform-origin: 50% 50%;
+  opacity:.95;
+}
+
+@keyframes shuttleSpin{
+  0%{ transform: translateY(0) rotate(0deg); }
+  50%{ transform: translateY(-3px) rotate(25deg); }
+  100%{ transform: translateY(0) rotate(0deg); }
+}
+
+/* 主卡片 */
+.card{
+  margin-top: 14px;
+  border-radius: var(--radius);
+  background: var(--card2);
+  box-shadow: var(--shadow2);
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.6);
+}
+
+/* 表單區 */
+.formRow{
+  display:flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 label{
-  font-size: 15px;
+  font-size: 14px;
   color: var(--muted);
   font-weight: 700;
 }
 
-/* 下拉：粉嫩 + 小花 */
+.selectBox{
+  min-width: 240px;
+  flex: 1;
+}
+
 select{
+  width: 100%;
   font-size: 16px;
-  padding: 12px 44px 12px 14px;
-  width: min(360px, 100%);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 170, 200, 0.65);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,245,250,0.85));
+  padding: 10px 12px;
+  margin-top: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(31,45,61,.18);
+  background: rgba(255,255,255,.95);
   outline: none;
-  box-shadow: 0 10px 25px rgba(255, 119, 168, 0.10);
-  color: var(--text);
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-  appearance: none;
-  position: relative;
-}
-
-.select-wrap{
-  position: relative;
-  width: min(360px, 100%);
-}
-
-.select-wrap::after{
-  content: "🌸";
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  font-size: 18px;
-  opacity: 0.9;
-  filter: drop-shadow(0 4px 10px rgba(255, 119, 168, 0.25));
+  transition: .18s ease;
+  box-shadow: 0 10px 18px rgba(0,0,0,.05);
 }
 
 select:focus{
-  border-color: rgba(255, 119, 168, 0.85);
-  box-shadow: 0 16px 35px rgba(255, 119, 168, 0.18);
-  transform: translateY(-1px);
+  border-color: rgba(30,167,255,.55);
+  box-shadow: 0 0 0 4px rgba(30,167,255,.15);
 }
 
-/* =========================
-   繳費狀態顯示
-   ========================= */
+/* 按鈕（小羽球 icon + hover 飛翔） */
+.btn{
+  position: relative;
+  border: none;
+  cursor: pointer;
+  border-radius: 16px;
+  padding: 11px 14px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  box-shadow: 0 14px 26px rgba(30,167,255,.25);
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  user-select:none;
+}
+
+.btn:active{
+  transform: translateY(1px);
+}
+
+/* hover: 羽球飛翔 */
+.btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(30,167,255,.32);
+}
+
+.btn .btnShuttle{
+  width: 18px;
+  height: 18px;
+  display:inline-block;
+  transition: transform .25s ease;
+}
+
+.btn:hover .btnShuttle{
+  transform: translateX(8px) translateY(-4px) rotate(20deg);
+}
+
+/* hover 飛翔軌跡 */
+.btn::after{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events:none;
+  opacity:0;
+  background:
+    radial-gradient(circle at 25% 60%, rgba(255,255,255,.35), transparent 35%),
+    radial-gradient(circle at 60% 35%, rgba(255,255,255,.25), transparent 40%),
+    radial-gradient(circle at 78% 70%, rgba(255,255,255,.18), transparent 45%);
+  transform: translateX(-8px);
+  transition: .25s ease;
+}
+
+.btn:hover::after{
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 繳費狀態 */
 #payStatus{
-  margin: 8px 0 10px;
+  margin-top: 14px;
   font-size: 18px;
   font-weight: 900;
-  letter-spacing: 1px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display:inline-flex;
+  align-items:center;
+  gap: 10px;
   padding: 10px 14px;
   border-radius: 999px;
-  border: 1px dashed rgba(255, 119, 168, 0.35);
-  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(31,45,61,.12);
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 10px 18px rgba(0,0,0,.05);
 }
 
-/* 讓「已繳費/未繳費」更可愛 */
-#payStatus::before{
-  content: "🌷";
-  font-size: 18px;
+.badgeDot{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff3b30;
+  box-shadow: 0 0 0 4px rgba(255,59,48,.12);
 }
 
-/* =========================
-   表格：粉嫩圓角
-   ========================= */
-.tableWrap{
-  width: 100%;
-  overflow: auto;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 214, 230, 0.75);
-  background: rgba(255,255,255,0.75);
-  box-shadow: 0 14px 35px rgba(255, 119, 168, 0.12);
+.paid .badgeDot{
+  background: #34c759;
+  box-shadow: 0 0 0 4px rgba(52,199,89,.14);
 }
 
+/* 表格 */
 table{
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
-  min-width: 520px;
+  background: rgba(255,255,255,.9);
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 12px 22px rgba(0,0,0,.06);
+  border: 1px solid rgba(31,45,61,.10);
 }
 
 th, td{
-  border-bottom: 1px solid rgba(255, 214, 230, 0.7);
-  padding: 12px 10px;
+  padding: 11px 10px;
   text-align: center;
   font-size: 15px;
+  border-bottom: 1px solid rgba(31,45,61,.08);
 }
 
 th{
-  background:
-    linear-gradient(180deg, rgba(255, 225, 238, 0.95), rgba(255, 245, 250, 0.75));
-  color: var(--text);
+  background: linear-gradient(180deg, rgba(30,167,255,.14), rgba(30,167,255,.06));
   font-weight: 900;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  color: #0d3a57;
 }
 
-tbody tr{
-  transition: transform .12s ease, background .12s ease;
-}
-tbody tr:hover{
-  background: rgba(255, 225, 238, 0.35);
-  transform: translateY(-1px);
+tbody tr:hover td{
+  background: rgba(30,167,255,.06);
 }
 
-/* =========================
-   春季按鈕（如果你未來要加按鈕用）
-   - 目前頁面沒有按鈕，但你要求 hover 飄花效果
-   - 我先做成通用 class，你要加按鈕時直接套用即可
-   ========================= */
-.flowerBtn{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 119, 168, 0.35);
-  background: linear-gradient(135deg, rgba(255,119,168,0.20), rgba(255,210,230,0.35));
-  color: var(--text);
-  font-weight: 900;
-  cursor: pointer;
-  transition: transform .16s ease, box-shadow .16s ease;
-  overflow: hidden;
-  user-select: none;
+tbody tr:last-child td{
+  border-bottom: none;
 }
 
-.flowerBtn::before{
-  content:"🌸";
-  font-size: 18px;
-}
-
-.flowerBtn:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 16px 40px rgba(255, 119, 168, 0.20);
-}
-
-/* hover 飄花 */
-.flowerBtn:hover::after{
-  content:"";
-  position:absolute;
-  inset:-40%;
-  background-image:
-    radial-gradient(circle, rgba(255,119,168,0.35) 0 2px, transparent 3px),
-    radial-gradient(circle, rgba(255,210,230,0.45) 0 2px, transparent 3px),
-    radial-gradient(circle, rgba(180,235,255,0.35) 0 2px, transparent 3px);
-  background-size: 26px 26px, 34px 34px, 42px 42px;
-  animation: petals 1.2s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes petals{
-  from { transform: translate3d(-10px, 10px,0) rotate(0deg); }
-  to   { transform: translate3d(30px, -30px,0) rotate(12deg); }
-}
-
-/* =========================
-   小尺寸適配
-   ========================= */
+/* RWD */
 @media (max-width: 520px){
-  h2{ font-size: 22px; }
-  table{ min-width: 460px; }
+  body{ padding: 16px; }
+  h2{ font-size: 20px; }
+  .card{ padding: 14px; }
+  .btn{ width: 100%; justify-content:center; }
+  .selectBox{ width: 100%; }
 }
 </style>
 </head>
 
 <body>
   <div class="wrap">
+
+    <div class="hero">
+      <div class="titleRow">
+        <h2>
+          <span class="shuttleIcon" aria-hidden="true">
+            <!-- 小羽球 icon -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M14.6 3.2c-1.6 1.6-1.4 4.1.4 5.9l1.2 1.2c1.8 1.8 4.3 2 5.9.4"
+                    stroke="#1ea7ff" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12.2 5.6 6.2 11.6c-2.6 2.6-2.6 6.9 0 9.5"
+                    stroke="#34c759" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.2 21.1c2.6-2.6 6.9-2.6 9.5 0"
+                    stroke="#34c759" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8.2 14.2l3.6 3.6M10.2 12.2l3.6 3.6M12.2 10.2l3.6 3.6"
+                    stroke="#1f2d3d" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          繳費查詢
+        </h2>
+
+        <div class="tabs">
+          <div class="tab">
+            <span class="miniShuttle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M14.6 3.2c-1.6 1.6-1.4 4.1.4 5.9l1.2 1.2c1.8 1.8 4.3 2 5.9.4"
+                      stroke="#1ea7ff" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12.2 5.6 6.2 11.6c-2.6 2.6-2.6 6.9 0 9.5"
+                      stroke="#34c759" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            羽球查詢模式
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
 
-      <h2><span class="h2-flower"></span>繳費查詢</h2>
-
-      <div class="controls">
-        <label>選擇學生：</label>
-
-        <div class="select-wrap">
+      <div class="formRow">
+        <div class="selectBox">
+          <label>選擇學生：</label>
           <select id="studentSelect">
             <option value="">--請選擇--</option>
           </select>
         </div>
 
-        <div id="payStatus"></div>
+        <!-- 這顆按鈕不影響功能，只是外觀與互動 -->
+        <button class="btn" type="button" onclick="document.getElementById('studentSelect').focus()">
+          <span class="btnShuttle" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M14.6 3.2c-1.6 1.6-1.4 4.1.4 5.9l1.2 1.2c1.8 1.8 4.3 2 5.9.4"
+                    stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12.2 5.6 6.2 11.6c-2.6 2.6-2.6 6.9 0 9.5"
+                    stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          快速選擇
+        </button>
       </div>
 
-      <div class="tableWrap">
-        <table id="resultTable">
-          <thead></thead>
-          <tbody></tbody>
-        </table>
+      <div id="payStatus" style="display:none;">
+        <span class="badgeDot"></span>
+        <span class="statusText"></span>
       </div>
+
+      <table id="resultTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
 
     </div>
   </div>
@@ -451,19 +516,21 @@ function filterData(studentName) {
 // ====== 繳費狀態判斷 ======
 function renderPayStatus(data) {
   const statusDiv = document.getElementById("payStatus");
-  statusDiv.textContent = "";
+  const dot = statusDiv.querySelector(".badgeDot");
+  const text = statusDiv.querySelector(".statusText");
+
+  statusDiv.classList.remove("paid");
+  statusDiv.style.display = "none";
+  text.textContent = "";
 
   const payIdx = header.indexOf("繳費情況");
   if (payIdx === -1) return;
 
   const hasPaid = data.some(r => String(r[payIdx] ?? "").trim() === "已繳費");
-  statusDiv.textContent = hasPaid ? "已繳費" : "未繳費";
 
-  // 顏色更直覺（不改功能）
-  statusDiv.style.color = hasPaid ? "var(--good)" : "var(--bad)";
-  statusDiv.style.borderColor = hasPaid
-    ? "rgba(26,163,122,0.25)"
-    : "rgba(255,63,110,0.25)";
+  statusDiv.style.display = "inline-flex";
+  statusDiv.classList.toggle("paid", hasPaid);
+  text.textContent = hasPaid ? "已繳費" : "未繳費";
 }
 
 // ====== 顯示表格（姓名、項目、繳費情況） ======
