@@ -15,20 +15,18 @@
   body {
     font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
     background-color: #e8f5e9;
-    /* 背景加入可愛的羽毛球運動元素感 */
     background-image: radial-gradient(#c8e6c9 1px, transparent 1px);
     background-size: 20px 20px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 水平置中 */
-    justify-content: flex-start; /* 垂直靠上 */
+    align-items: center; 
+    justify-content: flex-start; 
     min-height: 100vh;
     margin: 0;
     padding: 40px 20px;
     color: #2e7d32;
   }
 
-  /* 羽毛球標籤 */
   .title-container {
     text-align: center;
     position: relative;
@@ -46,7 +44,7 @@
   }
 
   h2::before {
-    content: '🏸'; /* 羽毛球圖標 */
+    content: '🏸';
     position: absolute;
     left: -10px;
     top: -10px;
@@ -54,7 +52,6 @@
     transform: rotate(-20deg);
   }
 
-  /* 選擇器容器 */
   .search-box {
     background: white;
     padding: 20px;
@@ -63,7 +60,6 @@
     border: 3px solid var(--primary-green);
     margin-bottom: 20px;
     transition: all 0.3s;
-    position: relative;
   }
 
   .search-box:hover {
@@ -88,13 +84,11 @@
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%234CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>') no-repeat right 10px center;
   }
 
-  /* 按鈕 Hover 羽毛球飛翔效果 */
   select:hover {
     border-color: var(--primary-green);
     box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
   }
 
-  /* 表格樣式 */
   #resultTable {
     border-collapse: separate;
     border-spacing: 0;
@@ -104,7 +98,7 @@
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    animation: bounceIn 0.6s ease; /* Tab 動畫 */
+    animation: bounceIn 0.6s ease;
   }
 
   @keyframes bounceIn {
@@ -131,7 +125,6 @@
   tr:last-child td { border-bottom: none; }
   tr:hover td { background-color: #f1f8e9; }
 
-  /* 隱藏原本的狀態提示字 */
   #payStatus { display: none; }
 </style>
 </head>
@@ -199,14 +192,18 @@ async function loadCSV() {
   const text = await res.text();
   const parsed = parseCSV(text);
   rows = parsed.filter(r => r.some(c => c && String(c).trim() !== ""));
-  header = rows[0];
+  header = rows[0].map(h => h.trim()); // 去除標題空白
   buildStudentDropdown();
 }
 
 function buildStudentDropdown() {
   const set = new Set();
+  const idxName = header.indexOf("姓名");
+  // 若找不到標題則預設使用第一欄 (Index 0)
+  const targetIdx = idxName !== -1 ? idxName : 0;
+
   rows.slice(1).forEach(r => {
-    const name = String(r[0] ?? "").trim();
+    const name = String(r[targetIdx] ?? "").trim();
     if (name) set.add(name);
   });
   const select = document.getElementById("studentSelect");
@@ -220,8 +217,7 @@ function buildStudentDropdown() {
 }
 
 function filterData(studentName) {
-  const idxName = header.indexOf("姓名");
-  if (idxName === -1) return [];
+  const idxName = header.indexOf("姓名") !== -1 ? header.indexOf("姓名") : 0;
   return rows.slice(1).filter(r => String(r[idxName] ?? "").trim() === studentName);
 }
 
@@ -234,23 +230,27 @@ function renderTable(data) {
     return;
   }
 
-  const idxName = header.indexOf("姓名");
-  const idxType = header.indexOf("類別"); 
-  const idxPay  = header.indexOf("繳費情況");
+  // 自動識別索引：項目通常在 B 欄 (Index 1)，或者標題為「項目」或「類別」
+  const idxName = header.indexOf("姓名") !== -1 ? header.indexOf("姓名") : 0;
+  let idxItem = header.indexOf("項目");
+  if (idxItem === -1) idxItem = header.indexOf("類別");
+  if (idxItem === -1) idxItem = 1; // 最終防禦：直接抓第二欄
 
-  // 重新觸發動畫
+  const idxPay = header.indexOf("繳費情況") !== -1 ? header.indexOf("繳費情況") : 2;
+
+  // 動畫效果觸發
   const table = document.getElementById("resultTable");
   table.style.animation = 'none';
   table.offsetHeight; 
   table.style.animation = null;
 
   data.forEach(r => {
-    // 檢查是否為空行（過濾掉全是空值的行）
-    if (r[idxName] || r[idxType] || r[idxPay]) {
+    // 檢查非空白才顯示
+    if ((r[idxName] && r[idxName].trim()) || (r[idxItem] && r[idxItem].trim()) || (r[idxPay] && r[idxPay].trim())) {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${r[idxName] ?? ""}</td>
-        <td>${r[idxType] ?? ""}</td>
+        <td>${r[idxItem] ?? ""}</td>
         <td>${r[idxPay] ?? ""}</td>
       `;
       tbody.appendChild(tr);
@@ -260,7 +260,10 @@ function renderTable(data) {
 
 document.getElementById("studentSelect").addEventListener("change", e => {
   const student = e.target.value;
-  if(!student) return;
+  if(!student) {
+    document.querySelector("#resultTable tbody").innerHTML = '<tr><td colspan="3" style="color:#999; padding: 30px;">請選擇上方學生進行查詢</td></tr>';
+    return;
+  }
   const data = filterData(student);
   renderTable(data);
 });
